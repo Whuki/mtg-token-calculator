@@ -1,170 +1,149 @@
-// src/App.jsx
 import React, { useState } from "react";
-import CustomQuantityInput from "./components/CustomQuantityInput";
-import { Analytics } from "@vercel/analytics/react";
+import CustomQuantityInput from "./CustomQuantityInput";
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(false);
-  const [advancedMode, setAdvancedMode] = useState(false);
+  const [mode, setMode] = useState("simple");
   const [baseTokens, setBaseTokens] = useState(0);
-  const [rows, setRows] = useState([]);
-  const [cardType, setCardType] = useState("Soldier"); // dropdown selection
+  const [multipliers, setMultipliers] = useState([]);
+  const [selectedCard, setSelectedCard] = useState("Doubler");
 
-  const cardOptions = [
-    "Soldier",
-    "Zombie",
-    "Elf",
-    "Goblin",
-    "Dragon",
-    "Saproling",
+  const multiplierOptions = [
+    { label: "Doubler (x2)", value: 2 },
+    { label: "Tripler (x3)", value: 3 },
+    { label: "Quadrupler (x4)", value: 4 },
   ];
 
-  const toggleDarkMode = () => setDarkMode(!darkMode);
-  const toggleAdvancedMode = () => setAdvancedMode(!advancedMode);
-
-  const addRow = () => {
-    setRows([
-      ...rows,
-      { id: Date.now(), type: cardType, multiplier: 1, quantity: 1 },
-    ]);
+  const handleAddCard = () => {
+    if (selectedCard) {
+      const option = multiplierOptions.find(opt => opt.label === selectedCard);
+      setMultipliers([
+        ...multipliers,
+        { name: option.label, multiplier: option.value, quantity: 1 },
+      ]);
+    }
   };
 
-  const updateRow = (id, field, value) => {
-    setRows(
-      rows.map((row) =>
-        row.id === id ? { ...row, [field]: value } : row
-      )
-    );
+  const handleQuantityChange = (index, newQuantity) => {
+    const updated = [...multipliers];
+    updated[index].quantity = newQuantity;
+    setMultipliers(updated);
   };
 
-  const removeRow = (id) => {
-    setRows(rows.filter((row) => row.id !== id));
-  };
+  const totalMultiplier = multipliers.reduce(
+    (acc, curr) => acc * Math.pow(curr.multiplier, curr.quantity),
+    1
+  );
 
-  const calculateTotal = () => {
-    let total = baseTokens;
-    rows.forEach((row) => {
-      total += row.multiplier * row.quantity;
-    });
-    return total;
-  };
+  const totalTokens = baseTokens * totalMultiplier;
 
   return (
-    <div className={`${darkMode ? "dark" : ""} min-h-screen`}>
-      <div className="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen p-6">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col items-center p-6">
+      <div className="w-full max-w-4xl bg-gray-900/80 rounded-2xl shadow-lg p-6">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">MTG Token Calculator</h1>
-          <div className="flex items-center space-x-3">
-            <label className="flex items-center space-x-2">
-              <span>Dark Mode</span>
-              <input
-                type="checkbox"
-                checked={darkMode}
-                onChange={toggleDarkMode}
-              />
-            </label>
-            <label className="flex items-center space-x-2">
-              <span>Advanced Mode</span>
-              <input
-                type="checkbox"
-                checked={advancedMode}
-                onChange={toggleAdvancedMode}
-              />
-            </label>
-          </div>
-        </div>
+        <h1 className="text-2xl font-bold text-center mb-6">
+          MTG Token Calculator
+        </h1>
 
-        {/* Base Tokens */}
-        <div className="flex items-center space-x-4 mb-6">
-          <h2 className="text-lg font-semibold">Base Tokens Created:</h2>
-          <CustomQuantityInput
-            value={baseTokens}
-            onChange={setBaseTokens}
-          />
-        </div>
-
-        {/* Add Card with Dropdown */}
-        <div className="flex items-center space-x-3 mb-6">
-          <select
-            value={cardType}
-            onChange={(e) => setCardType(e.target.value)}
-            className="p-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800"
-          >
-            {cardOptions.map((option) => (
-              <option key={option}>{option}</option>
-            ))}
-          </select>
+        {/* Mode Toggle */}
+        <div className="flex justify-center mb-6 space-x-4">
           <button
-            onClick={addRow}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+            onClick={() => setMode("simple")}
+            className={`px-4 py-2 rounded-xl transition ${
+              mode === "simple"
+                ? "bg-blue-600"
+                : "bg-gray-700 hover:bg-gray-600"
+            }`}
           >
-            Add Card
+            Simple Mode
+          </button>
+          <button
+            onClick={() => setMode("advanced")}
+            className={`px-4 py-2 rounded-xl transition ${
+              mode === "advanced"
+                ? "bg-blue-600"
+                : "bg-gray-700 hover:bg-gray-600"
+            }`}
+          >
+            Advanced Mode
           </button>
         </div>
 
-        {/* Rows Table */}
-        {rows.length > 0 && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-200 dark:bg-gray-700">
-                  <th className="p-3">Card Type</th>
-                  {advancedMode && <th className="p-3">Multiplier</th>}
-                  <th className="p-3">Quantity</th>
-                  <th className="p-3">Remove</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row, idx) => (
-                  <tr
-                    key={row.id}
-                    className={
-                      idx % 2 === 0
-                        ? "bg-gray-100 dark:bg-gray-800"
-                        : "bg-white dark:bg-gray-900"
-                    }
-                  >
-                    <td className="p-3">{row.type}</td>
-                    {advancedMode && (
-                      <td className="p-3">
+        {/* Base Tokens (shown in both modes) */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">Base Tokens Created</h2>
+          <CustomQuantityInput
+            value={baseTokens}
+            onChange={setBaseTokens}
+            rowIndex={-1} // ensures it doesn’t inherit zebra-striping
+          />
+        </div>
+
+        {/* Advanced Mode */}
+        {mode === "advanced" && (
+          <>
+            {/* Dropdown + Add Button */}
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              <input
+                list="multiplier-options"
+                value={selectedCard}
+                onChange={(e) => setSelectedCard(e.target.value)}
+                className="bg-gray-800 text-white px-3 py-2 rounded-lg flex-1"
+                placeholder="Select multiplier..."
+              />
+              <datalist id="multiplier-options">
+                {multiplierOptions.map((opt) => (
+                  <option key={opt.label} value={opt.label} />
+                ))}
+              </datalist>
+              <button
+                onClick={handleAddCard}
+                className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-xl"
+              >
+                Add Card
+              </button>
+            </div>
+
+            {/* Multipliers Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-800">
+                    <th className="px-4 py-2">Card</th>
+                    <th className="px-4 py-2">Multiplier</th>
+                    <th className="px-4 py-2">Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {multipliers.map((m, index) => (
+                    <tr
+                      key={index}
+                      className={index % 2 === 0 ? "bg-gray-900" : "bg-gray-800"}
+                    >
+                      <td className="px-4 py-2">{m.name}</td>
+                      <td className="px-4 py-2">x{m.multiplier}</td>
+                      <td className="px-4 py-2">
                         <CustomQuantityInput
-                          value={row.multiplier}
-                          onChange={(val) =>
-                            updateRow(row.id, "multiplier", val)
+                          value={m.quantity}
+                          onChange={(newQty) =>
+                            handleQuantityChange(index, newQty)
                           }
+                          rowIndex={index}
                         />
                       </td>
-                    )}
-                    <td className="p-3">
-                      <CustomQuantityInput
-                        value={row.quantity}
-                        onChange={(val) =>
-                          updateRow(row.id, "quantity", val)
-                        }
-                      />
-                    </td>
-                    <td className="p-3">
-                      <button
-                        onClick={() => removeRow(row.id)}
-                        className="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-                      >
-                        ✕
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
 
-        {/* Total */}
-        <div className="mt-6 text-xl font-bold">
-          Total Tokens: {calculateTotal()}
+        {/* Total Tokens */}
+        <div className="mt-6 text-center">
+          <h2 className="text-xl font-bold">Total Tokens</h2>
+          <p className="text-3xl mt-2 text-green-400">{totalTokens}</p>
         </div>
       </div>
-      <Analytics />
     </div>
   );
 }
