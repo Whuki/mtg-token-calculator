@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import CustomQuantityInput from "./CustomQuantityInput";
 import { Analytics } from "@vercel/analytics/react";
 
 const CARD_PRESETS = [
@@ -107,14 +108,10 @@ export default function App() {
             ].map((item, idx) => (
               <div key={idx} className="flex gap-2 items-center">
                 <label className="flex-1">{item.label}</label>
-                <input
-                  type="number"
-                  min="0"
+                <CustomQuantityInput
                   value={item.value}
-                  onChange={(e) => item.setValue(Number(e.target.value))}
-                  className={`w-16 p-2 border rounded-lg text-center focus:outline-none focus:ring-2 transition-all duration-200
-                    ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400" 
-                               : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"}`}
+                  onChange={item.setValue}
+                  darkMode={darkMode}
                 />
               </div>
             ))}
@@ -133,7 +130,7 @@ export default function App() {
                 <tr>
                   <th className="px-2 py-1 w-48 text-left">Card Name</th>
                   <th className="px-2 py-1 w-20 text-center">Multiplier</th>
-                  <th className="px-2 py-1 w-20 text-center">Quantity</th>
+                  <th className="px-2 py-1 w-24 text-center">Quantity</th>
                   <th className="px-2 py-1 w-16 text-center">Remove</th>
                 </tr>
               </thead>
@@ -157,48 +154,31 @@ export default function App() {
                             )
                           );
                         }}
-                        className={`p-1 border rounded-lg focus:outline-none focus:ring-2 w-full md:w-auto min-w-[140px] max-w-full transition-all duration-200
-                          ${darkMode
-                            ? idx % 2 === 0
-                              ? "bg-gray-800 border-gray-600 text-gray-100 focus:ring-blue-400"
-                              : "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400"
-                            : idx % 2 === 0
-                              ? "bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-400"
-                              : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"
-                          }`}
+                        className={`p-1 border rounded-lg focus:outline-none focus:ring-2 w-full md:w-auto min-w-[120px]
+                          ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400" 
+                                     : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"}`}
                       >
-                        {CARD_PRESETS.map((c) => (
-                          <option key={c.name} value={c.name}>
+                        {CARD_PRESETS.map((c, i) => (
+                          <option key={i} value={c.name}>
                             {c.name}
                           </option>
                         ))}
                       </select>
                     </td>
-
                     <td className="block md:table-cell px-2 py-1 text-center">
                       <span className="md:hidden font-semibold">Multiplier: </span>
-                      {card.multiplier}
+                      {card.multiplier}x
                     </td>
-
-                    <td className="block md:table-cell px-2 py-1 flex justify-center items-center w-24">
-                      <span className="md:hidden font-semibold mr-1">Quantity: </span>
-                      <input
-                        type="number"
-                        min="0"
+                    <td className="block md:table-cell px-2 py-1 text-center">
+                      <span className="md:hidden font-semibold">Quantity: </span>
+                      <CustomQuantityInput
                         value={card.quantity}
-                        onChange={(e) =>
-                          setCards(
-                            cards.map((c, i) =>
-                              i === idx ? { ...c, quantity: Number(e.target.value) } : c
-                            )
-                          )
+                        onChange={(val) =>
+                          setCards(cards.map((c, i) => (i === idx ? { ...c, quantity: val } : c)))
                         }
-                        className={`w-16 p-1 border rounded-lg text-center focus:outline-none focus:ring-2 transition-all duration-200 appearance-none
-                          ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400 hover:ring-blue-500" 
-                                     : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400 hover:ring-blue-500"}`}
+                        darkMode={darkMode}
                       />
                     </td>
-
                     <td className="block md:table-cell px-2 py-1 text-center">
                       <button
                         onClick={() => setCards(cards.filter((_, i) => i !== idx))}
