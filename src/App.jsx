@@ -35,7 +35,7 @@ export default function App() {
     <div className={`${darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"} min-h-screen flex items-center justify-center p-6`}>
       <div className={`w-full max-w-xl shadow-xl rounded-2xl p-6 space-y-6
         ${darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}>
-        
+
         {/* Dark Mode Toggle */}
         <div className="flex justify-end">
           <label className="flex items-center gap-2">
@@ -182,4 +182,20 @@ export default function App() {
         {/* Reset Button */}
         <div className="flex justify-between">
           <button
-            className={`px-4 py-2 border rounded ${darkMode ? "bg-gray-700 text-gray-100 hover:bg-gray-600"
+            className={`px-4 py-2 border rounded ${darkMode ? "bg-gray-700 text-gray-100 hover:bg-gray-600" : "bg-gray-300 text-gray-900 hover:bg-gray-400"}`}
+            onClick={() => {
+              setBaseTokens(1);
+              setDoublers(0);
+              setTriplers(0);
+              setQuadruplers(0);
+              setCards([{ name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 }]);
+            }}
+          >
+            Reset All
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
