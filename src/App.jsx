@@ -84,35 +84,33 @@ export default function App() {
           </p>
         </div>
 
-        {/* Base Tokens */}
-        <div>
-          <label className="block font-medium mb-1">Base Tokens Created</label>
-          <input
-            type="number"
-            min="0"
-            value={baseTokens}
-            onChange={(e) => setBaseTokens(Number(e.target.value))}
-            className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors
-              ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400" 
-                         : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"}`}
-          />
-        </div>
-
         {/* Simple Mode */}
         {!advancedMode && (
           <div className="space-y-4">
+            {/* Base Tokens */}
+            <div className="flex gap-2 items-center flex-wrap">
+              <label className="flex-1 min-w-[120px]">Base Tokens Created</label>
+              <CustomQuantityInput
+                value={baseTokens}
+                onChange={setBaseTokens}
+                darkMode={darkMode}
+                rowIndex={0}
+              />
+            </div>
+
+            {/* Doublers, Triplers, Quadruplers */}
             {[
               { label: "Doublers (x2)", value: doublers, setValue: setDoublers },
               { label: "Triplers (x3)", value: triplers, setValue: setTriplers },
               { label: "Quadruplers (x4)", value: quadruplers, setValue: setQuadruplers },
             ].map((item, idx) => (
-              <div key={idx} className="flex gap-2 items-center">
-                <label className="flex-1">{item.label}</label>
+              <div key={idx + 1} className="flex gap-2 items-center flex-wrap">
+                <label className="flex-1 min-w-[120px]">{item.label}</label>
                 <CustomQuantityInput
                   value={item.value}
                   onChange={item.setValue}
                   darkMode={darkMode}
-                  rowIndex={idx}
+                  rowIndex={idx + 1}
                 />
               </div>
             ))}
@@ -211,7 +209,7 @@ export default function App() {
               </tbody>
             </table>
 
-            <div className="mt-2 flex justify-between flex-wrap gap-2">
+            <div className="flex justify-between items-center mt-4 flex-wrap gap-2">
               <button
                 onClick={() =>
                   setCards([

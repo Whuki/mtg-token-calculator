@@ -37,7 +37,7 @@ export default function CustomQuantityInput({ value, onChange, darkMode, rowInde
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         min={0}
-        className={`w-12 text-center p-1 rounded-sm focus:outline-none focus:ring-1 ${bgColor} focus:ring-blue-400`}
+        className={`w-16 text-center p-1 rounded-sm focus:outline-none focus:ring-1 ${bgColor} focus:ring-blue-400`}
       />
       <button
         type="button"
