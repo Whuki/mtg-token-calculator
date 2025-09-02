@@ -7,12 +7,13 @@ const CARD_PRESETS = [
   { name: "Anointed Procession", multiplier: 2 },
   { name: "Primal Vigor", multiplier: 2 },
   { name: "Mondrak", multiplier: 2 },
-  // Add more cards here as needed
+  // Add more cards here if needed
 ];
 
 export default function App() {
   const [baseTokens, setBaseTokens] = useState(1);
   const [advancedMode, setAdvancedMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   // Simple mode multipliers
   const [doublers, setDoublers] = useState(0);
@@ -24,20 +25,31 @@ export default function App() {
     { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 },
   ]);
 
-  // Calculate totals
+  // Totals
   const simpleTotal =
     baseTokens * Math.pow(2, doublers) * Math.pow(3, triplers) * Math.pow(4, quadruplers);
-
   const advancedTotal =
     baseTokens *
     cards.reduce((acc, card) => acc * Math.pow(card.multiplier, card.quantity), 1);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-      <div className="w-full max-w-xl bg-white shadow-xl rounded-2xl p-6 space-y-6">
+    <div className={`${darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"} min-h-screen flex items-center justify-center p-6`}>
+      <div className="w-full max-w-xl bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6 space-y-6">
+        {/* Dark Mode Toggle */}
+        <div className="flex justify-end">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={darkMode}
+              onChange={() => setDarkMode(!darkMode)}
+            />
+            Dark Mode
+          </label>
+        </div>
+
         <h1 className="text-2xl font-bold text-center">MTG Token Calculator</h1>
 
-        {/* Toggle Advanced Mode */}
+        {/* Advanced Mode Toggle */}
         <div>
           <label className="flex items-center gap-2">
             <input
@@ -57,7 +69,7 @@ export default function App() {
             min="0"
             value={baseTokens}
             onChange={(e) => setBaseTokens(Number(e.target.value))}
-            className="w-full p-2 border rounded"
+            className={`w-full p-2 border rounded focus:outline-none focus:ring-2 ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400" : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"}`}
           />
         </div>
 
@@ -76,13 +88,13 @@ export default function App() {
                   min="0"
                   value={item.value}
                   onChange={(e) => item.setValue(Number(e.target.value))}
-                  className="w-16 p-1 border rounded text-center"
+                  className={`w-16 p-2 border rounded text-center focus:outline-none focus:ring-2 ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400" : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"}`}
                 />
               </div>
             ))}
 
-            <div className="text-center text-xl font-semibold">
-              Total Tokens: <span className="text-green-600">{simpleTotal}</span>
+            <div className="text-center text-xl font-bold mt-4 p-2 rounded bg-green-100 dark:bg-green-800">
+              Total Tokens: <span className="text-green-700 dark:text-green-300">{simpleTotal}</span>
             </div>
           </div>
         )}
@@ -101,7 +113,7 @@ export default function App() {
               </thead>
               <tbody>
                 {cards.map((card, idx) => (
-                  <tr key={idx}>
+                  <tr key={idx} className={idx % 2 === 0 ? (darkMode ? "bg-gray-800" : "bg-gray-50") : (darkMode ? "bg-gray-700" : "bg-white")}>
                     <td className="border px-2 py-1">
                       <select
                         value={card.name}
@@ -111,7 +123,7 @@ export default function App() {
                             i === idx ? { ...c, name: selected.name, multiplier: selected.multiplier } : c
                           ));
                         }}
-                        className="w-full p-1 border rounded"
+                        className={`w-full p-1 border rounded focus:outline-none focus:ring-2 ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400" : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"}`}
                       >
                         {CARD_PRESETS.map((c) => (
                           <option key={c.name} value={c.name}>{c.name}</option>
@@ -129,12 +141,12 @@ export default function App() {
                             i === idx ? { ...c, quantity: Number(e.target.value) } : c
                           ))
                         }
-                        className="w-16 p-1 border rounded text-center"
+                        className={`w-16 p-1 border rounded text-center focus:outline-none focus:ring-2 ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400" : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"}`}
                       />
                     </td>
                     <td className="border px-2 py-1 text-center">
                       <button
-                        className="px-2 py-1 border rounded text-red-600"
+                        className={`px-2 py-1 border rounded ${darkMode ? "bg-red-700 text-white hover:bg-red-600" : "bg-red-500 text-white hover:bg-red-600"}`}
                         onClick={() => setCards(cards.filter((_, i) => i !== idx))}
                       >
                         X
@@ -146,14 +158,14 @@ export default function App() {
             </table>
 
             <button
-              className="mt-2 px-4 py-2 border rounded"
+              className={`mt-2 px-4 py-2 border rounded ${darkMode ? "bg-blue-700 text-white hover:bg-blue-600" : "bg-blue-500 text-white hover:bg-blue-600"}`}
               onClick={() => setCards([...cards, { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 }])}
             >
               Add Card
             </button>
 
-            <div className="text-center text-xl font-semibold mt-4">
-              Total Tokens: <span className="text-green-600">{advancedTotal}</span>
+            <div className="text-center text-xl font-bold mt-4 p-2 rounded bg-green-100 dark:bg-green-800">
+              Total Tokens: <span className="text-green-700 dark:text-green-300">{advancedTotal}</span>
             </div>
           </div>
         )}
@@ -161,7 +173,7 @@ export default function App() {
         {/* Reset Button */}
         <div className="flex justify-between">
           <button
-            className="px-4 py-2 border rounded"
+            className={`px-4 py-2 border rounded ${darkMode ? "bg-gray-700 text-gray-100 hover:bg-gray-600" : "bg-gray-200 text-gray-900 hover:bg-gray-300"}`}
             onClick={() => {
               setBaseTokens(1);
               setDoublers(0);
@@ -169,6 +181,7 @@ export default function App() {
               setQuadruplers(0);
               setCards([{ name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 }]);
               setAdvancedMode(false);
+              setDarkMode(false);
             }}
           >
             Reset

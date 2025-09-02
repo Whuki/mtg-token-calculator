@@ -1,32 +1,43 @@
 import React, { useState } from "react";
 
-// Preset multiplier cards
+// Preset multiplier cards for Advanced Mode
 const CARD_PRESETS = [
   { name: "Doubling Season", multiplier: 2 },
   { name: "Parallel Lives", multiplier: 2 },
   { name: "Anointed Procession", multiplier: 2 },
   { name: "Primal Vigor", multiplier: 2 },
   { name: "Mondrak", multiplier: 2 },
-  // Add more cards here if needed
+  // Add more cards here as needed
 ];
 
 export default function App() {
   const [baseTokens, setBaseTokens] = useState(1);
   const [advancedMode, setAdvancedMode] = useState(false);
 
-  // Advanced mode state
-  const [cards, setCards] = useState([{ name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 }]);
+  // Simple mode multipliers
+  const [doublers, setDoublers] = useState(0);
+  const [triplers, setTriplers] = useState(0);
+  const [quadruplers, setQuadruplers] = useState(0);
 
-  // Calculate total tokens
-  const totalTokens =
+  // Advanced mode state
+  const [cards, setCards] = useState([
+    { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 },
+  ]);
+
+  // Calculate totals
+  const simpleTotal =
+    baseTokens * Math.pow(2, doublers) * Math.pow(3, triplers) * Math.pow(4, quadruplers);
+
+  const advancedTotal =
     baseTokens *
     cards.reduce((acc, card) => acc * Math.pow(card.multiplier, card.quantity), 1);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-6 space-y-6">
+      <div className="w-full max-w-xl bg-white shadow-xl rounded-2xl p-6 space-y-6">
         <h1 className="text-2xl font-bold text-center">MTG Token Calculator</h1>
 
+        {/* Toggle Advanced Mode */}
         <div>
           <label className="flex items-center gap-2">
             <input
@@ -38,6 +49,7 @@ export default function App() {
           </label>
         </div>
 
+        {/* Base Tokens */}
         <div>
           <label className="block font-medium mb-1">Base Tokens Created</label>
           <input
@@ -49,15 +61,42 @@ export default function App() {
           />
         </div>
 
-        {advancedMode && (
+        {/* Simple Mode Inputs */}
+        {!advancedMode && (
           <div className="space-y-4">
-            <table className="w-full border-collapse">
+            {[
+              { label: "Doublers (x2)", value: doublers, setValue: setDoublers },
+              { label: "Triplers (x3)", value: triplers, setValue: setTriplers },
+              { label: "Quadruplers (x4)", value: quadruplers, setValue: setQuadruplers },
+            ].map((item, idx) => (
+              <div key={idx} className="flex gap-2 items-center">
+                <label className="flex-1">{item.label}</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={item.value}
+                  onChange={(e) => item.setValue(Number(e.target.value))}
+                  className="w-16 p-1 border rounded text-center"
+                />
+              </div>
+            ))}
+
+            <div className="text-center text-xl font-semibold">
+              Total Tokens: <span className="text-green-600">{simpleTotal}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Advanced Mode Table */}
+        {advancedMode && (
+          <div className="space-y-4 overflow-x-auto">
+            <table className="w-full min-w-[550px] border-collapse">
               <thead>
                 <tr>
-                  <th className="border px-2 py-1">Card Name</th>
-                  <th className="border px-2 py-1">Multiplier</th>
-                  <th className="border px-2 py-1">Quantity</th>
-                  <th className="border px-2 py-1">Remove</th>
+                  <th className="border px-2 py-1 w-48">Card Name</th>
+                  <th className="border px-2 py-1 w-20">Multiplier</th>
+                  <th className="border px-2 py-1 w-20">Quantity</th>
+                  <th className="border px-2 py-1 w-16">Remove</th>
                 </tr>
               </thead>
               <tbody>
@@ -112,18 +151,22 @@ export default function App() {
             >
               Add Card
             </button>
+
+            <div className="text-center text-xl font-semibold mt-4">
+              Total Tokens: <span className="text-green-600">{advancedTotal}</span>
+            </div>
           </div>
         )}
 
-        <div className="text-center text-xl font-semibold mt-4">
-          Total Tokens: <span className="text-green-600">{totalTokens}</span>
-        </div>
-
+        {/* Reset Button */}
         <div className="flex justify-between">
           <button
             className="px-4 py-2 border rounded"
             onClick={() => {
               setBaseTokens(1);
+              setDoublers(0);
+              setTriplers(0);
+              setQuadruplers(0);
               setCards([{ name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 }]);
               setAdvancedMode(false);
             }}
