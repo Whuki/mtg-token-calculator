@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, animate } from "framer-motion";
 import CustomQuantityInput from "./CustomQuantityInput";
 import { Analytics } from "@vercel/analytics/react";
@@ -19,26 +19,26 @@ const CARD_PRESETS = [
 
 // Token milestones
 const TOKEN_MILESTONES = {
-  20: "20 Tokens: Enough to chump block for days 🛡️",
-  40: "40 Tokens: That’s a Commander life total in blockers 👑",
-  69: "69 Tokens: Nice 😏",
-  100: "100 Tokens: Triple digits. Your table hates you 💀",
-  420: "420 Tokens: Blaze it 🌿🔥",
-  1000: "1,000 Tokens: Spreadsheet territory 📊",
-  10000: "10,000 Tokens: Judge! I need dice 🎲",
-  100000: "100,000 Tokens: Just tell your friends they’re dead ☠️",
+  20: "20 Tokens Generated: Enough to chump block for days 🛡️",
+  40: "40 Tokens Generated: That’s a Commander life total in blockers 👑",
+  69: "69 Tokens Generated: Nice 😏",
+  100: "100 Tokens Generated: Triple digits. Your table hates you 💀",
+  420: "420 Tokens Generated: Blaze it 🌿🔥",
+  1000: "1,000 Tokens Generated: Spreadsheet territory 📊",
+  10000: "10,000 Tokens Generated: Judge! I need dice 🎲",
+  100000: "100,000 Tokens Generated: Just tell your friends they’re dead ☠️",
 };
 
 // Scute milestones
 const SCUTE_MILESTONES = {
-  20: "20 Scutes: Enough to blot out the sun 🪲",
-  40: "40 Scutes: The colony grows 👑",
-  69: "69 Scutes: Nice swarm 😏",
-  100: "100 Scutes: Your board is writhing 💀",
-  420: "420 Scutes: The infestation blazes 🌿🔥",
-  1000: "1,000 Scutes: Hive mind achieved 📊",
-  10000: "10,000 Scutes: Bugged out! 🎲",
-  100000: "100,000 Scutes: Game over, man. Game over ☠️",
+  20: "20 Scutes Generated: Enough to blot out the sun 🪲",
+  40: "40 Scutes Generated: The colony grows 👑",
+  69: "69 Scutes Generated: Nice swarm 😏",
+  100: "100 Scutes Generated: Your board is writhing 💀",
+  420: "420 Scutes Generated: The infestation blazes 🌿🔥",
+  1000: "1,000 Scutes Generated: Hive mind achieved 📊",
+  10000: "10,000 Scutes Generated: Bugged out! 🎲",
+  100000: "100,000 Scutes Generated: Game over, man. Game over ☠️",
 };
 
 export default function App() {
@@ -63,7 +63,8 @@ export default function App() {
 
   // Totals + animation
   const [animatedTotal, setAnimatedTotal] = useState(1);
-  const [toasts, setToasts] = useState([]);
+  const [toast, setToast] = useState(null); // single toast only
+  const prevTotalRef = useRef(1);
 
   const simpleTotal =
     baseTokens * Math.pow(2, doublers) * Math.pow(3, triplers) * Math.pow(4, quadruplers);
@@ -89,20 +90,23 @@ export default function App() {
     return () => controls.stop();
   }, [total]);
 
-  // Milestone toasts
+  // Milestone toast (only when increasing, single toast at a time)
   useEffect(() => {
-    const milestones = tab === "scute" ? SCUTE_MILESTONES : TOKEN_MILESTONES;
-    Object.keys(milestones).forEach((m) => {
-      const milestone = parseInt(m);
-      if (animatedTotal === milestone) {
-        const id = Date.now() + Math.random();
-        setToasts((prev) => [...prev, { id, text: milestones[milestone], mode: tab }]);
-        // Auto-dismiss after 4s
-        setTimeout(() => {
-          setToasts((prev) => prev.filter((t) => t.id !== id));
-        }, 4000);
-      }
-    });
+    const prevTotal = prevTotalRef.current;
+    if (animatedTotal > prevTotal) {
+      const milestones = tab === "scute" ? SCUTE_MILESTONES : TOKEN_MILESTONES;
+      Object.keys(milestones).forEach((m) => {
+        const milestone = parseInt(m);
+        if (animatedTotal === milestone) {
+          const newToast = { id: Date.now(), text: milestones[milestone], mode: tab };
+          setToast(newToast); // replace any existing
+          setTimeout(() => {
+            setToast((curr) => (curr && curr.id === newToast.id ? null : curr));
+          }, 4000);
+        }
+      });
+    }
+    prevTotalRef.current = animatedTotal;
   }, [animatedTotal, tab]);
 
   // Reset all
@@ -262,7 +266,7 @@ export default function App() {
               transition={{ duration: 0.6 }}
               className="text-3xl font-extrabold text-green-300 text-center tabular-nums"
             >
-              🪲 Total Scutes: {scutes}
+              🪲 Total Scutes Generated: {scutes}
             </motion.h2>
 
             <div className="flex gap-2 items-center justify-center">
@@ -335,17 +339,17 @@ export default function App() {
           </div>
         )}
 
-        {/* Toasts */}
-        <div className="fixed top-20 right-6 space-y-2 z-50">
+        {/* Toast */}
+        <div className="fixed bottom-6 right-6 z-50">
           <AnimatePresence>
-            {toasts.map((toast) => (
+            {toast && (
               <motion.div
                 key={toast.id}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 50 }}
-                transition={{ duration: 0.4 }}
-                onClick={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))}
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                transition={{ duration: 0.3 }}
+                onClick={() => setToast(null)}
                 className={`px-4 py-2 rounded-lg shadow-lg cursor-pointer backdrop-blur-md ${
                   toast.mode === "scute"
                     ? "bg-green-700/70 text-green-100 border border-green-400/50"
@@ -354,7 +358,7 @@ export default function App() {
               >
                 {toast.text}
               </motion.div>
-            ))}
+            )}
           </AnimatePresence>
         </div>
 
