@@ -64,16 +64,8 @@ export default function App() {
         {/* Simple Mode */}
         {!advancedMode && (
           <div className="space-y-4">
-            {/* Base Tokens row with +/- buttons */}
-            <div className="flex gap-2 items-center justify-center">
-              <label className="text-lg font-bold flex-1 text-center">Base Tokens Created</label>
-              <CustomQuantityInput
-                value={baseTokens}
-                onChange={setBaseTokens}
-                darkMode={darkMode}
-                rowIndex={-1} // special header coloring
-              />
-            </div>
+            {/* Base Tokens Header */}
+            <div className="text-center text-lg font-bold">Base Tokens Created: {baseTokens}</div>
 
             {/* Doublers / Triplers / Quadruplers */}
             {[
