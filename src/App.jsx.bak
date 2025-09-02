@@ -1,0 +1,95 @@
+import React, { useState } from "react";
+
+export default function App() {
+  const [baseTokens, setBaseTokens] = useState(1);
+  const [modifiers, setModifiers] = useState([]);
+
+  const totalMultiplier = modifiers.reduce((acc, m) => acc * m, 1);
+  const totalTokens = baseTokens * totalMultiplier;
+
+  const addModifier = (multiplier) => {
+    setModifiers([...modifiers, multiplier]);
+  };
+
+  const removeModifier = (index) => {
+    setModifiers(modifiers.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-6 space-y-6">
+        <h1 className="text-2xl font-bold text-center">MTG Token Calculator</h1>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block font-medium mb-1">Base Tokens Created</label>
+            <input
+              type="number"
+              min="0"
+              value={baseTokens}
+              onChange={(e) => setBaseTokens(Number(e.target.value))}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+
+          <div>
+            <h2 className="font-medium mb-2">Modifiers</h2>
+            <ul className="space-y-2">
+              {modifiers.map((m, i) => (
+                <li
+                  key={i}
+                  className="flex justify-between items-center bg-gray-200 p-2 rounded-lg"
+                >
+                  <span>x{m}</span>
+                  <button
+                    className="px-2 py-1 bg-red-500 text-white rounded"
+                    onClick={() => removeModifier(i)}
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <div className="flex gap-2 mt-3 flex-wrap">
+              <button
+                className="px-3 py-2 bg-blue-500 text-white rounded"
+                onClick={() => addModifier(2)}
+              >
+                + Add Doubler (x2)
+              </button>
+              <button
+                className="px-3 py-2 bg-green-500 text-white rounded"
+                onClick={() => addModifier(3)}
+              >
+                + Add Tripler (x3)
+              </button>
+              <button
+                className="px-3 py-2 bg-purple-500 text-white rounded"
+                onClick={() => addModifier(4)}
+              >
+                + Add Quadrupler (x4)
+              </button>
+            </div>
+          </div>
+
+          <div className="text-center text-xl font-semibold">
+            Total Tokens: <span className="text-green-600">{totalTokens}</span>
+          </div>
+        </div>
+
+        <div className="flex justify-between">
+          <button
+            className="px-4 py-2 border rounded"
+            onClick={() => {
+              setBaseTokens(1);
+              setModifiers([]);
+            }}
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
