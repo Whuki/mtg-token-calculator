@@ -20,7 +20,7 @@ export default function CustomQuantityInput({ value, onChange, darkMode, rowInde
     <div className={`flex items-center border rounded ${backgroundClass} w-[120px]`}>
       <button
         onClick={() => onChange(Math.max(0, value - 1))}
-        className="px-2 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+        className="px-2 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors rounded-l"
       >
         -
       </button>
@@ -32,7 +32,7 @@ export default function CustomQuantityInput({ value, onChange, darkMode, rowInde
       />
       <button
         onClick={() => onChange(value + 1)}
-        className="px-2 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+        className="px-2 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors rounded-r"
       >
         +
       </button>

@@ -20,16 +20,26 @@ export default function App() {
     { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 },
   ]);
 
-  const simpleTotal = baseTokens * Math.pow(2, doublers) * Math.pow(3, triplers) * Math.pow(4, quadruplers);
-  const advancedTotal = cards.reduce((total, card) => total + card.quantity * card.multiplier, 0);
+  const simpleTotal =
+    baseTokens * Math.pow(2, doublers) * Math.pow(3, triplers) * Math.pow(4, quadruplers);
+  const advancedTotal = cards.reduce(
+    (total, card) => total + card.quantity * card.multiplier,
+    0
+  );
 
   return (
-    <div className={darkMode ? "bg-gray-900 text-gray-100 min-h-screen p-4" : "bg-gray-100 text-gray-900 min-h-screen p-4"}>
+    <div
+      className={
+        darkMode
+          ? "bg-gray-900 text-gray-100 min-h-screen p-4"
+          : "bg-gray-100 text-gray-900 min-h-screen p-4"
+      }
+    >
       <div className="max-w-3xl mx-auto p-4 bg-white dark:bg-gray-800 rounded shadow transition-colors">
         <h1 className="text-2xl font-bold text-center mb-2">MTG Token Calculator</h1>
         <p className="text-center text-sm mb-4">Because Yenna makes my brain hurt..😅</p>
 
-        {/* Mode Toggle */}
+        {/* Mode & Dark/Light Toggle */}
         <div className="flex justify-center items-center gap-4 mb-4">
           <label className="flex items-center gap-2">
             <span>Advanced Mode</span>
@@ -54,18 +64,18 @@ export default function App() {
         {/* Simple Mode */}
         {!advancedMode && (
           <div className="space-y-4">
-            {/* Base Tokens */}
+            {/* Base Tokens row with +/- buttons */}
             <div className="flex gap-2 items-center justify-center">
               <label className="text-lg font-bold flex-1 text-center">Base Tokens Created</label>
               <CustomQuantityInput
                 value={baseTokens}
                 onChange={setBaseTokens}
                 darkMode={darkMode}
-                rowIndex={-1}
+                rowIndex={-1} // special header coloring
               />
             </div>
 
-            {/* Doublers, Triplers, Quadruplers */}
+            {/* Doublers / Triplers / Quadruplers */}
             {[
               { label: "Doublers (x2)", value: doublers, setValue: setDoublers },
               { label: "Triplers (x3)", value: triplers, setValue: setTriplers },
@@ -99,15 +109,25 @@ export default function App() {
               </thead>
               <tbody>
                 {cards.map((card, idx) => (
-                  <tr key={idx} className={idx % 2 === 0 ? "bg-gray-100 dark:bg-gray-700" : "bg-gray-200 dark:bg-gray-800"}>
+                  <tr
+                    key={idx}
+                    className={
+                      idx % 2 === 0 ? "bg-gray-100 dark:bg-gray-700" : "bg-gray-200 dark:bg-gray-800"
+                    }
+                  >
                     <td className="px-2 py-1">{card.name}</td>
                     <td className="px-2 py-1">{card.multiplier}</td>
                     <td className="px-2 py-1">
-                      <CustomQuantityInput value={card.quantity} onChange={(val) => {
-                        const newCards = [...cards];
-                        newCards[idx].quantity = val;
-                        setCards(newCards);
-                      }} darkMode={darkMode} rowIndex={idx} />
+                      <CustomQuantityInput
+                        value={card.quantity}
+                        onChange={(val) => {
+                          const newCards = [...cards];
+                          newCards[idx].quantity = val;
+                          setCards(newCards);
+                        }}
+                        darkMode={darkMode}
+                        rowIndex={idx}
+                      />
                     </td>
                   </tr>
                 ))}
@@ -117,7 +137,10 @@ export default function App() {
             <div className="flex justify-between items-center mt-4 flex-wrap gap-2">
               <button
                 onClick={() =>
-                  setCards([...cards, { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 }])
+                  setCards([
+                    ...cards,
+                    { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 },
+                  ])
                 }
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
               >
