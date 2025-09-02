@@ -90,11 +90,14 @@ export default function App() {
             {/* Base Tokens */}
             <div className="flex gap-2 items-center flex-wrap">
               <label className="flex-1 min-w-[120px]">Base Tokens Created</label>
-              <CustomQuantityInput
+              <input
+                type="number"
                 value={baseTokens}
-                onChange={setBaseTokens}
-                darkMode={darkMode}
-                rowIndex={0}
+                onChange={(e) => setBaseTokens(Number(e.target.value))}
+                min={0}
+                className={`w-16 text-center p-1 rounded-sm focus:outline-none focus:ring-1 ${
+                  darkMode ? "bg-gray-700 text-gray-100" : "bg-gray-50 text-gray-900"
+                } focus:ring-blue-400`}
               />
             </div>
 
@@ -104,13 +107,13 @@ export default function App() {
               { label: "Triplers (x3)", value: triplers, setValue: setTriplers },
               { label: "Quadruplers (x4)", value: quadruplers, setValue: setQuadruplers },
             ].map((item, idx) => (
-              <div key={idx + 1} className="flex gap-2 items-center flex-wrap">
+              <div key={idx} className="flex gap-2 items-center flex-wrap">
                 <label className="flex-1 min-w-[120px]">{item.label}</label>
                 <CustomQuantityInput
                   value={item.value}
                   onChange={item.setValue}
                   darkMode={darkMode}
-                  rowIndex={idx + 1}
+                  rowIndex={idx}
                 />
               </div>
             ))}
@@ -123,7 +126,7 @@ export default function App() {
 
         {/* Advanced Mode */}
         {advancedMode && (
-          <div className="overflow-x-auto scrollbar-thin pr-4">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400 pr-4">
             <table className="w-full min-w-[550px] border-collapse rounded-lg">
               <thead className="hidden md:table-header-group">
                 <tr>
@@ -221,9 +224,7 @@ export default function App() {
               >
                 Add Card
               </button>
-              <div className="text-xl font-bold mt-2 md:mt-0">
-                Total Tokens: {advancedTotal}
-              </div>
+              <div className="text-xl font-bold mt-2 md:mt-0">Total Tokens: {advancedTotal}</div>
             </div>
           </div>
         )}
