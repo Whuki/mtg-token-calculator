@@ -106,9 +106,9 @@ export default function App() {
 
         {/* Advanced Mode Table */}
         {advancedMode && (
-          <div className="space-y-4 overflow-x-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-300 dark:scrollbar-track-gray-700 dark:scrollbar-thumb-blue-600">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-300 dark:scrollbar-track-gray-700 dark:scrollbar-thumb-blue-600">
             <table className="w-full min-w-[550px] border-collapse">
-              <thead>
+              <thead className="hidden md:table-header-group">
                 <tr>
                   <th className="border px-2 py-1 w-48">Card Name</th>
                   <th className="border px-2 py-1 w-20">Multiplier</th>
@@ -116,10 +116,11 @@ export default function App() {
                   <th className="border px-2 py-1 w-16">Remove</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="block md:table-row-group">
                 {cards.map((card, idx) => (
-                  <tr key={idx} className={idx % 2 === 0 ? (darkMode ? "bg-gray-800" : "bg-gray-50") : (darkMode ? "bg-gray-700" : "bg-white")}>
-                    <td className="border px-2 py-1">
+                  <tr key={idx} className={`block md:table-row ${idx % 2 === 0 ? (darkMode ? "bg-gray-800" : "bg-gray-50") : (darkMode ? "bg-gray-700" : "bg-white")}`}>
+                    <td className="block md:table-cell px-2 py-1">
+                      <span className="md:hidden font-semibold">Card Name: </span>
                       <select
                         value={card.name}
                         onChange={(e) => {
@@ -129,16 +130,21 @@ export default function App() {
                           ));
                         }}
                         className={`w-full p-1 border rounded focus:outline-none focus:ring-2
-                          ${darkMode ? "bg-gray-800 border-gray-600 text-gray-100 focus:ring-blue-400" 
-                                     : "bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-400"}`}
+                          ${darkMode ? "border-gray-600 text-gray-100 focus:ring-blue-400" 
+                                     : "border-gray-300 text-gray-900 focus:ring-blue-400"}`}
+                        style={{ backgroundColor: "inherit" }}
                       >
                         {CARD_PRESETS.map((c) => (
                           <option key={c.name} value={c.name}>{c.name}</option>
                         ))}
                       </select>
                     </td>
-                    <td className="border px-2 py-1 text-center">{card.multiplier}</td>
-                    <td className="border px-2 py-1">
+                    <td className="block md:table-cell px-2 py-1 text-center">
+                      <span className="md:hidden font-semibold">Multiplier: </span>
+                      {card.multiplier}
+                    </td>
+                    <td className="block md:table-cell px-2 py-1">
+                      <span className="md:hidden font-semibold">Quantity: </span>
                       <input
                         type="number"
                         min="0"
@@ -153,7 +159,8 @@ export default function App() {
                                      : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"}`}
                       />
                     </td>
-                    <td className="border px-2 py-1 text-center">
+                    <td className="block md:table-cell px-2 py-1 text-center">
+                      <span className="md:hidden font-semibold">Remove: </span>
                       <button
                         className={`px-2 py-1 border rounded ${darkMode ? "bg-red-700 text-white hover:bg-red-600" : "bg-red-500 text-white hover:bg-red-600"}`}
                         onClick={() => setCards(cards.filter((_, i) => i !== idx))}
