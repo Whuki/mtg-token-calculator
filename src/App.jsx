@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Analytics } from "@vercel/analytics/react";
 
-// Preset multiplier cards for Advanced Mode
 const CARD_PRESETS = [
   { name: "Doubling Season", multiplier: 2 },
   { name: "Parallel Lives", multiplier: 2 },
@@ -13,7 +12,7 @@ const CARD_PRESETS = [
 export default function App() {
   const [baseTokens, setBaseTokens] = useState(1);
   const [advancedMode, setAdvancedMode] = useState(false);
-  const [darkMode, setDarkMode] = useState(true); // Dark mode default
+  const [darkMode, setDarkMode] = useState(true);
 
   const [doublers, setDoublers] = useState(0);
   const [triplers, setTriplers] = useState(0);
@@ -39,7 +38,7 @@ export default function App() {
         className={`w-full max-w-5xl shadow-xl rounded-2xl p-6 space-y-6 transition-all duration-300
         ${darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}
       >
-        {/* Toggle switches */}
+        {/* Toggles */}
         <div className="flex justify-end gap-4">
           {/* Dark/Light Mode */}
           <div className="flex items-center gap-2">
@@ -98,7 +97,7 @@ export default function App() {
           />
         </div>
 
-        {/* Simple Mode Inputs */}
+        {/* Simple Mode */}
         {!advancedMode && (
           <div className="space-y-4">
             {[
@@ -126,9 +125,9 @@ export default function App() {
           </div>
         )}
 
-        {/* Advanced Mode Table */}
+        {/* Advanced Mode */}
         {advancedMode && (
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-300 dark:scrollbar-track-gray-700 dark:scrollbar-thumb-blue-600">
+          <div className="overflow-x-auto scrollbar-thin pr-4">
             <table className="w-full min-w-[550px] border-collapse rounded-lg">
               <thead className="hidden md:table-header-group">
                 <tr>
@@ -181,7 +180,7 @@ export default function App() {
                       {card.multiplier}
                     </td>
 
-                    <td className="block md:table-cell px-2 py-1 flex justify-center md:justify-center items-center w-24">
+                    <td className="block md:table-cell px-2 py-1 flex justify-center items-center w-24">
                       <span className="md:hidden font-semibold mr-1">Quantity: </span>
                       <input
                         type="number"
@@ -194,7 +193,7 @@ export default function App() {
                             )
                           )
                         }
-                        className={`w-16 p-1 border rounded-lg text-center focus:outline-none focus:ring-2 transition-all duration-200
+                        className={`w-16 p-1 border rounded-lg text-center focus:outline-none focus:ring-2 transition-all duration-200 appearance-none
                           ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400 hover:ring-blue-500" 
                                      : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400 hover:ring-blue-500"}`}
                       />
@@ -202,10 +201,8 @@ export default function App() {
 
                     <td className="block md:table-cell px-2 py-1 text-center">
                       <button
-                        className={`px-2 py-1 border rounded-lg transition-all duration-200
-                          ${darkMode ? "bg-red-700 text-white hover:bg-red-600 hover:scale-105" 
-                                     : "bg-red-500 text-white hover:bg-red-600 hover:scale-105"}`}
                         onClick={() => setCards(cards.filter((_, i) => i !== idx))}
+                        className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                       >
                         X
                       </button>
@@ -215,30 +212,29 @@ export default function App() {
               </tbody>
             </table>
 
-            <button
-              className={`mt-2 px-4 py-2 border rounded-lg transition-all duration-200
-                ${darkMode ? "bg-blue-700 text-white hover:bg-blue-600 hover:scale-105" : "bg-blue-500 text-white hover:bg-blue-600 hover:scale-105"}`}
-              onClick={() =>
-                setCards([
-                  ...cards,
-                  { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 },
-                ])
-              }
-            >
-              Add Card
-            </button>
+            <div className="mt-2 flex justify-between flex-wrap gap-2">
+              <button
+                onClick={() =>
+                  setCards([
+                    ...cards,
+                    { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 },
+                  ])
+                }
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+              >
+                Add Card
+              </button>
 
-            <div className="text-center text-xl font-bold mt-4 p-2 rounded bg-green-100 dark:bg-green-800 transition-colors">
-              Total Tokens: <span className="text-green-700 dark:text-green-300">{advancedTotal}</span>
+              <div className="text-xl font-bold mt-2 md:mt-0">
+                Total Tokens: <span className="text-green-700 dark:text-green-300">{advancedTotal}</span>
+              </div>
             </div>
           </div>
         )}
 
         {/* Reset Button */}
-        <div className="flex justify-between">
+        <div className="text-center">
           <button
-            className={`px-4 py-2 border rounded-lg transition-all duration-200
-              ${darkMode ? "bg-gray-700 text-gray-100 hover:bg-gray-600 hover:scale-105" : "bg-gray-300 text-gray-900 hover:bg-gray-400 hover:scale-105"}`}
             onClick={() => {
               setBaseTokens(1);
               setDoublers(0);
@@ -246,6 +242,7 @@ export default function App() {
               setQuadruplers(0);
               setCards([{ name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 }]);
             }}
+            className="px-4 py-2 bg-gray-500 dark:bg-gray-600 text-white rounded hover:bg-gray-600 transition-colors"
           >
             Reset All
           </button>
