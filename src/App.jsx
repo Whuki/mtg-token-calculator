@@ -110,10 +110,10 @@ export default function App() {
             <table className="w-full min-w-[550px] border-collapse">
               <thead className="hidden md:table-header-group">
                 <tr>
-                  <th className="border px-2 py-1 w-48">Card Name</th>
-                  <th className="border px-2 py-1 w-20">Multiplier</th>
-                  <th className="border px-2 py-1 w-20">Quantity</th>
-                  <th className="border px-2 py-1 w-16">Remove</th>
+                  <th className="px-2 py-1 w-48">Card Name</th>
+                  <th className="px-2 py-1 w-20">Multiplier</th>
+                  <th className="px-2 py-1 w-20">Quantity</th>
+                  <th className="px-2 py-1 w-16">Remove</th>
                 </tr>
               </thead>
               <tbody className="block md:table-row-group">
@@ -130,12 +130,13 @@ export default function App() {
                           ));
                         }}
                         className={`w-full p-1 border rounded focus:outline-none focus:ring-2
-                          ${darkMode ? "border-gray-600 text-gray-100 focus:ring-blue-400" 
-                                     : "border-gray-300 text-gray-900 focus:ring-blue-400"}`}
-                        style={{ backgroundColor: "inherit" }}
+                          ${darkMode ? "border-gray-600 focus:ring-blue-400" : "border-gray-300 focus:ring-blue-400"}`}
+                        style={{ backgroundColor: "inherit", color: darkMode ? "#f5f5f5" : "#111" }}
                       >
                         {CARD_PRESETS.map((c) => (
-                          <option key={c.name} value={c.name}>{c.name}</option>
+                          <option key={c.name} value={c.name} className={darkMode ? "text-gray-100 bg-gray-800" : ""}>
+                            {c.name}
+                          </option>
                         ))}
                       </select>
                     </td>
