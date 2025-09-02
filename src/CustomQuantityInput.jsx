@@ -1,10 +1,8 @@
 import React from "react";
 
 export default function CustomQuantityInput({ value, onChange, darkMode, rowIndex }) {
-  const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
-
-  const increment = () => onChange(clamp(value + 1, 0, 100));
-  const decrement = () => onChange(clamp(value - 1, 0, 100));
+  const increment = () => onChange(value + 1);
+  const decrement = () => onChange(value > 0 ? value - 1 : 0);
 
   // Row-based background colors
   const bgColor =
@@ -37,9 +35,8 @@ export default function CustomQuantityInput({ value, onChange, darkMode, rowInde
       <input
         type="number"
         value={value}
-        onChange={(e) => onChange(clamp(Number(e.target.value), 0, 100))}
+        onChange={(e) => onChange(Number(e.target.value))}
         min={0}
-        max={100}
         className={`w-16 text-center p-1 rounded-sm focus:outline-none focus:ring-1 ${bgColor} focus:ring-blue-400`}
       />
       <button

@@ -23,28 +23,12 @@ export default function App() {
     { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 },
   ]);
 
-  const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
-
   const simpleTotal =
-    baseTokens *
-    Math.pow(2, clamp(doublers, 0, 100)) *
-    Math.pow(3, clamp(triplers, 0, 100)) *
-    Math.pow(4, clamp(quadruplers, 0, 100));
+    baseTokens * Math.pow(2, doublers) * Math.pow(3, triplers) * Math.pow(4, quadruplers);
 
   const advancedTotal =
     baseTokens *
-    cards.reduce(
-      (acc, card) => acc * Math.pow(card.multiplier, clamp(card.quantity, 0, 100)),
-      1
-    );
-
-  const addCard = () => {
-    if (cards.length >= 50) return; // Max 50 cards
-    setCards([
-      ...cards,
-      { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 },
-    ]);
-  };
+    cards.reduce((acc, card) => acc * Math.pow(card.multiplier, card.quantity), 1);
 
   return (
     <div
@@ -57,7 +41,7 @@ export default function App() {
         ${darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}
       >
         {/* Toggles */}
-        <div className="flex justify-end gap-4">
+        <div className="flex justify-end gap-4 flex-wrap">
           {/* Dark/Light Mode */}
           <div className="flex items-center gap-2">
             <span>Light Mode</span>
@@ -141,7 +125,18 @@ export default function App() {
 
         {/* Advanced Mode */}
         {advancedMode && (
-          <div className="overflow-x-auto scrollbar-thin pr-4">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400 scrollbar-track-gray-200 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-700 pr-4">
+            {/* Base Tokens */}
+            <div className="flex gap-2 items-center flex-wrap mb-2">
+              <label className="flex-1 min-w-[120px]">Base Tokens Created</label>
+              <CustomQuantityInput
+                value={baseTokens}
+                onChange={setBaseTokens}
+                darkMode={darkMode}
+                rowIndex={0}
+              />
+            </div>
+
             <table className="w-full min-w-[550px] border-collapse rounded-lg">
               <thead className="hidden md:table-header-group">
                 <tr>
@@ -172,7 +167,9 @@ export default function App() {
                         <select
                           value={card.name}
                           onChange={(e) => {
-                            const selected = CARD_PRESETS.find((c) => c.name === e.target.value);
+                            const selected = CARD_PRESETS.find(
+                              (c) => c.name === e.target.value
+                            );
                             setCards(
                               cards.map((c, i) =>
                                 i === idx
@@ -198,17 +195,19 @@ export default function App() {
                           ))}
                         </select>
                       </td>
-                      <td className="block md:table-cell px-2 py-1 text-center">
+                      <td className="block md:table-cell px-2 py-1 text-center md:text-center flex md:block justify-between md:justify-center gap-2">
                         <span className="md:hidden font-semibold">Multiplier: </span>
                         {card.multiplier}x
                       </td>
-                      <td className="block md:table-cell px-2 py-1 text-center">
+                      <td className="block md:table-cell px-2 py-1 text-center md:text-center flex md:block justify-between md:justify-center gap-2">
                         <span className="md:hidden font-semibold">Quantity: </span>
                         <CustomQuantityInput
                           value={card.quantity}
                           onChange={(val) =>
                             setCards(
-                              cards.map((c, i) => (i === idx ? { ...c, quantity: clamp(val, 0, 100) } : c))
+                              cards.map((c, i) =>
+                                i === idx ? { ...c, quantity: val } : c
+                              )
                             )
                           }
                           rowIndex={idx}
@@ -231,12 +230,19 @@ export default function App() {
 
             <div className="flex justify-between items-center mt-4 flex-wrap gap-2">
               <button
-                onClick={addCard}
+                onClick={() =>
+                  setCards([
+                    ...cards,
+                    { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 },
+                  ])
+                }
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
               >
                 Add Card
               </button>
-              <div className="text-xl font-bold mt-2 md:mt-0">Total Tokens: {advancedTotal}</div>
+              <div className="text-xl font-bold mt-2 md:mt-0">
+                Total Tokens: {advancedTotal}
+              </div>
             </div>
           </div>
         )}
