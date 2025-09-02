@@ -112,7 +112,7 @@ export default function App() {
                   min="0"
                   value={item.value}
                   onChange={(e) => item.setValue(Number(e.target.value))}
-                  className={`w-16 p-2 border rounded-lg text-center focus:outline-none focus:ring-2 transition-colors
+                  className={`w-16 p-2 border rounded-lg text-center focus:outline-none focus:ring-2 transition-all duration-200
                     ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400" 
                                : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"}`}
                 />
@@ -145,7 +145,7 @@ export default function App() {
                       ${idx % 2 === 0 ? (darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-50 hover:bg-gray-100") 
                                        : (darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-white hover:bg-gray-100")}`}
                   >
-                    <td className="block md:table-cell px-2 py-1">
+                    <td className="block md:table-cell px-2 py-1 md:max-w-[200px]">
                       <span className="md:hidden font-semibold">Card Name: </span>
                       <select
                         value={card.name}
@@ -157,7 +157,7 @@ export default function App() {
                             )
                           );
                         }}
-                        className={`p-1 border rounded-lg focus:outline-none focus:ring-2 w-full md:w-auto max-w-[150px] transition-colors
+                        className={`p-1 border rounded-lg focus:outline-none focus:ring-2 w-full md:w-auto min-w-[140px] max-w-full transition-all duration-200
                           ${darkMode ? "border-gray-600 focus:ring-blue-400 bg-gray-700 text-gray-100" 
                                      : "border-gray-300 focus:ring-blue-400 bg-white text-gray-900"}`}
                       >
@@ -174,7 +174,7 @@ export default function App() {
                       {card.multiplier}
                     </td>
 
-                    <td className="block md:table-cell px-2 py-1 flex justify-center md:justify-start items-center">
+                    <td className="block md:table-cell px-2 py-1 flex justify-center md:justify-center items-center">
                       <span className="md:hidden font-semibold mr-1">Quantity: </span>
                       <input
                         type="number"
@@ -187,16 +187,17 @@ export default function App() {
                             )
                           )
                         }
-                        className={`w-16 p-1 border rounded-lg text-center focus:outline-none focus:ring-2 transition-colors
-                          ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400" 
-                                     : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"}`}
+                        className={`w-20 md:w-16 p-1 border rounded-lg text-center focus:outline-none focus:ring-2 transition-all duration-200
+                          ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400 hover:ring-blue-500" 
+                                     : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400 hover:ring-blue-500"}`}
                       />
                     </td>
 
                     <td className="block md:table-cell px-2 py-1 text-center">
                       <button
-                        className={`px-2 py-1 border rounded-lg transition-colors
-                          ${darkMode ? "bg-red-700 text-white hover:bg-red-600" : "bg-red-500 text-white hover:bg-red-600"}`}
+                        className={`px-2 py-1 border rounded-lg transition-all duration-200
+                          ${darkMode ? "bg-red-700 text-white hover:bg-red-600 hover:scale-105" 
+                                     : "bg-red-500 text-white hover:bg-red-600 hover:scale-105"}`}
                         onClick={() => setCards(cards.filter((_, i) => i !== idx))}
                       >
                         X
@@ -208,8 +209,8 @@ export default function App() {
             </table>
 
             <button
-              className={`mt-2 px-4 py-2 border rounded-lg transition-colors
-                ${darkMode ? "bg-blue-700 text-white hover:bg-blue-600" : "bg-blue-500 text-white hover:bg-blue-600"}`}
+              className={`mt-2 px-4 py-2 border rounded-lg transition-all duration-200
+                ${darkMode ? "bg-blue-700 text-white hover:bg-blue-600 hover:scale-105" : "bg-blue-500 text-white hover:bg-blue-600 hover:scale-105"}`}
               onClick={() =>
                 setCards([
                   ...cards,
@@ -229,8 +230,8 @@ export default function App() {
         {/* Reset Button */}
         <div className="flex justify-between">
           <button
-            className={`px-4 py-2 border rounded-lg transition-colors
-              ${darkMode ? "bg-gray-700 text-gray-100 hover:bg-gray-600" : "bg-gray-300 text-gray-900 hover:bg-gray-400"}`}
+            className={`px-4 py-2 border rounded-lg transition-all duration-200
+              ${darkMode ? "bg-gray-700 text-gray-100 hover:bg-gray-600 hover:scale-105" : "bg-gray-300 text-gray-900 hover:bg-gray-400 hover:scale-105"}`}
             onClick={() => {
               setBaseTokens(1);
               setDoublers(0);
