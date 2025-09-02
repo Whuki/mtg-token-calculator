@@ -33,7 +33,7 @@ export default function App() {
 
   return (
     <div className={`${darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"} min-h-screen flex items-center justify-center p-6`}>
-      <div className={`w-full max-w-xl shadow-xl rounded-2xl p-6 space-y-6
+      <div className={`w-full max-w-5xl shadow-xl rounded-2xl p-6 space-y-6
         ${darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}>
 
         {/* Dark Mode Toggle */}
@@ -128,9 +128,9 @@ export default function App() {
                             i === idx ? { ...c, name: selected.name, multiplier: selected.multiplier } : c
                           ));
                         }}
-                        className={`w-full p-1 border rounded focus:outline-none focus:ring-2 
-                          ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400" 
-                                     : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"}`}
+                        className={`w-full p-1 border rounded focus:outline-none focus:ring-2
+                          ${darkMode ? "bg-gray-800 border-gray-600 text-gray-100 focus:ring-blue-400" 
+                                     : "bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-400"}`}
                       >
                         {CARD_PRESETS.map((c) => (
                           <option key={c.name} value={c.name}>{c.name}</option>
