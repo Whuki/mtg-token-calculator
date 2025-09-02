@@ -23,11 +23,28 @@ export default function App() {
     { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 },
   ]);
 
+  const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+
   const simpleTotal =
-    baseTokens * Math.pow(2, doublers) * Math.pow(3, triplers) * Math.pow(4, quadruplers);
+    baseTokens *
+    Math.pow(2, clamp(doublers, 0, 100)) *
+    Math.pow(3, clamp(triplers, 0, 100)) *
+    Math.pow(4, clamp(quadruplers, 0, 100));
+
   const advancedTotal =
     baseTokens *
-    cards.reduce((acc, card) => acc * Math.pow(card.multiplier, card.quantity), 1);
+    cards.reduce(
+      (acc, card) => acc * Math.pow(card.multiplier, clamp(card.quantity, 0, 100)),
+      1
+    );
+
+  const addCard = () => {
+    if (cards.length >= 50) return; // Max 50 cards
+    setCards([
+      ...cards,
+      { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 },
+    ]);
+  };
 
   return (
     <div
@@ -90,14 +107,11 @@ export default function App() {
             {/* Base Tokens */}
             <div className="flex gap-2 items-center flex-wrap">
               <label className="flex-1 min-w-[120px]">Base Tokens Created</label>
-              <input
-                type="number"
+              <CustomQuantityInput
                 value={baseTokens}
-                onChange={(e) => setBaseTokens(Number(e.target.value))}
-                min={0}
-                className={`w-16 text-center p-1 rounded-sm focus:outline-none focus:ring-1 ${
-                  darkMode ? "bg-gray-700 text-gray-100" : "bg-gray-50 text-gray-900"
-                } focus:ring-blue-400`}
+                onChange={setBaseTokens}
+                darkMode={darkMode}
+                rowIndex={0}
               />
             </div>
 
@@ -107,26 +121,27 @@ export default function App() {
               { label: "Triplers (x3)", value: triplers, setValue: setTriplers },
               { label: "Quadruplers (x4)", value: quadruplers, setValue: setQuadruplers },
             ].map((item, idx) => (
-              <div key={idx} className="flex gap-2 items-center flex-wrap">
+              <div key={idx + 1} className="flex gap-2 items-center flex-wrap">
                 <label className="flex-1 min-w-[120px]">{item.label}</label>
                 <CustomQuantityInput
                   value={item.value}
                   onChange={item.setValue}
                   darkMode={darkMode}
-                  rowIndex={idx}
+                  rowIndex={idx + 1}
                 />
               </div>
             ))}
 
             <div className="text-center text-xl font-bold mt-4 p-2 rounded bg-green-100 dark:bg-green-800 transition-colors">
-              Total Tokens: <span className="text-green-700 dark:text-green-300">{simpleTotal}</span>
+              Total Tokens:{" "}
+              <span className="text-green-700 dark:text-green-300">{simpleTotal}</span>
             </div>
           </div>
         )}
 
         {/* Advanced Mode */}
         {advancedMode && (
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400 pr-4">
+          <div className="overflow-x-auto scrollbar-thin pr-4">
             <table className="w-full min-w-[550px] border-collapse rounded-lg">
               <thead className="hidden md:table-header-group">
                 <tr>
@@ -192,7 +207,9 @@ export default function App() {
                         <CustomQuantityInput
                           value={card.quantity}
                           onChange={(val) =>
-                            setCards(cards.map((c, i) => (i === idx ? { ...c, quantity: val } : c)))
+                            setCards(
+                              cards.map((c, i) => (i === idx ? { ...c, quantity: clamp(val, 0, 100) } : c))
+                            )
                           }
                           rowIndex={idx}
                           darkMode={darkMode}
@@ -214,12 +231,7 @@ export default function App() {
 
             <div className="flex justify-between items-center mt-4 flex-wrap gap-2">
               <button
-                onClick={() =>
-                  setCards([
-                    ...cards,
-                    { name: CARD_PRESETS[0].name, multiplier: CARD_PRESETS[0].multiplier, quantity: 1 },
-                  ])
-                }
+                onClick={addCard}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
               >
                 Add Card
