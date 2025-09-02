@@ -154,7 +154,7 @@ export default function App() {
                             )
                           );
                         }}
-                        className={`p-1 border rounded-lg focus:outline-none focus:ring-2 w-full md:w-auto min-w-[120px]
+                        className={`p-1 rounded-lg focus:outline-none focus:ring-2 w-full md:w-auto min-w-[120px]
                           ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400" 
                                      : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"}`}
                       >
