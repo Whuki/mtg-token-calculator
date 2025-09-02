@@ -7,15 +7,15 @@
   "dev": "vite",
   "build": "node vercel-build.js",
   "preview": "vite preview"
-},
+}
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "vite": "^7.1.4",
-    "tailwindcss": "^3.3.3",
+    "autoprefixer": "^10.4.14",
     "postcss": "^8.4.27",
-    "autoprefixer": "^10.4.14"
+    "tailwindcss": "^3.3.3",
+    "vite": "^7.1.4"
   }
 }
