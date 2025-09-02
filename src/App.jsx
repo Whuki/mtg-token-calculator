@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 // Preset multiplier cards for Advanced Mode
 const CARD_PRESETS = [
@@ -158,8 +159,14 @@ export default function App() {
                           );
                         }}
                         className={`p-1 border rounded-lg focus:outline-none focus:ring-2 w-full md:w-auto min-w-[140px] max-w-full transition-all duration-200
-                          ${darkMode ? "border-gray-600 focus:ring-blue-400 bg-gray-700 text-gray-100" 
-                                     : "border-gray-300 focus:ring-blue-400 bg-white text-gray-900"}`}
+                          ${darkMode
+                            ? idx % 2 === 0
+                              ? "bg-gray-800 border-gray-600 text-gray-100 focus:ring-blue-400"
+                              : "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400"
+                            : idx % 2 === 0
+                              ? "bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-400"
+                              : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"
+                          }`}
                       >
                         {CARD_PRESETS.map((c) => (
                           <option key={c.name} value={c.name}>
@@ -174,7 +181,7 @@ export default function App() {
                       {card.multiplier}
                     </td>
 
-                    <td className="block md:table-cell px-2 py-1 flex justify-center md:justify-center items-center">
+                    <td className="block md:table-cell px-2 py-1 flex justify-center md:justify-center items-center w-24">
                       <span className="md:hidden font-semibold mr-1">Quantity: </span>
                       <input
                         type="number"
@@ -187,7 +194,7 @@ export default function App() {
                             )
                           )
                         }
-                        className={`w-20 md:w-16 p-1 border rounded-lg text-center focus:outline-none focus:ring-2 transition-all duration-200
+                        className={`w-16 p-1 border rounded-lg text-center focus:outline-none focus:ring-2 transition-all duration-200
                           ${darkMode ? "bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-400 hover:ring-blue-500" 
                                      : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400 hover:ring-blue-500"}`}
                       />
@@ -243,6 +250,9 @@ export default function App() {
             Reset All
           </button>
         </div>
+
+        {/* Vercel Analytics */}
+        <Analytics />
       </div>
     </div>
   );
