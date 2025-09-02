@@ -154,21 +154,14 @@ export default function App() {
               )}
             </button>
           ))}
-          {/* Toggles */}
+          {/* Dark/Light Toggle */}
           <div className="flex items-center gap-4 ml-auto shrink-0">
-            {/* Dark/Light */}
             <button
               aria-label="Toggle theme"
               onClick={() => setDarkMode(!darkMode)}
-              className={`w-12 h-6 rounded-full relative transition-colors ${
-                darkMode ? "bg-gray-600" : "bg-yellow-400"
-              }`}
+              className="flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-gray-700 transition"
             >
-              <span
-                className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transform transition-transform ${
-                  darkMode ? "" : "translate-x-6"
-                }`}
-              ></span>
+              {darkMode ? "🌙 Dark" : "🌞 Light"}
             </button>
           </div>
         </div>
@@ -177,7 +170,7 @@ export default function App() {
         {tab === "simple" && (
           <div className="space-y-4">
             <div className="flex gap-2 items-center flex-wrap">
-              <label className="flex-1">Base Tokens</label>
+              <label className="flex-1">Base Tokens Generated</label>
               <CustomQuantityInput value={baseTokens} onChange={setBaseTokens} darkMode={darkMode} />
             </div>
             {[
@@ -197,7 +190,7 @@ export default function App() {
         {tab === "advanced" && (
           <div className="space-y-4">
             <div className="flex gap-2 items-center flex-wrap">
-              <label className="flex-1">Base Tokens</label>
+              <label className="flex-1">Base Tokens Generated</label>
               <CustomQuantityInput value={baseTokens} onChange={setBaseTokens} darkMode={darkMode} />
             </div>
             <div className="flex gap-2 items-center">
@@ -320,25 +313,27 @@ export default function App() {
         )}
 
         {/* Total + Reset */}
-        <div className="flex justify-between items-center mt-6 flex-wrap gap-4">
-          <motion.div
-            key={animatedTotal}
-            initial={{ scale: 1 }}
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 0.4 }}
-            className={`text-3xl font-extrabold tabular-nums ${
-              tab === "scute" ? "text-green-400" : "text-blue-400"
-            }`}
-          >
-            Total Tokens: {animatedTotal}
-          </motion.div>
-          <button
-            onClick={handleReset}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 hover:scale-105 transition"
-          >
-            Reset
-          </button>
-        </div>
+        {(tab !== "scute" || includeScutes) && (
+          <div className="flex justify-between items-center mt-6 flex-wrap gap-4">
+            <motion.div
+              key={animatedTotal}
+              initial={{ scale: 1 }}
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 0.4 }}
+              className={`text-3xl font-extrabold tabular-nums ${
+                tab === "scute" ? "text-green-400" : "text-blue-400"
+              }`}
+            >
+              Total Tokens Generated: {animatedTotal}
+            </motion.div>
+            <button
+              onClick={handleReset}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 hover:scale-105 transition"
+            >
+              Reset
+            </button>
+          </div>
+        )}
 
         {/* Toasts */}
         <div className="fixed top-20 right-6 space-y-2 z-50">
