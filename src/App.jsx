@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, animate } from "framer-motion";
 import CustomQuantityInput from "./CustomQuantityInput";
 import { Analytics } from "@vercel/analytics/react";
+import { Volume2, VolumeX } from "lucide-react"; // speaker icons
 
 // Card presets with emoji flair
 const CARD_PRESETS = [
@@ -17,21 +18,34 @@ const CARD_PRESETS = [
   { name: "Adrix and Nev, Twincasters", multiplier: 2, emoji: "🧑‍🤝‍🧑" },
 ];
 
-// Milestones with cheeky MTG text
-const MILESTONES = {
-  20: "20? Enough to chump block for days. 🛡️",
-  40: "40? That’s a whole Commander life total in blockers. 👑",
-  69: "Nice. 😏",
-  100: "Triple digits. Your table hates you now. 💀",
-  420: "Blaze it. Token farming on another level. 🌿🔥",
-  1000: "We’ve entered spreadsheet territory. 📊",
-  10000: "Judge! I need dice. All of them. 🎲",
-  100000: "At this point, just tell your friends they’re dead. ☠️",
+// Token milestones
+const TOKEN_MILESTONES = {
+  20: "20 Tokens: Enough to chump block for days 🛡️",
+  40: "40 Tokens: That’s a Commander life total in blockers 👑",
+  69: "69 Tokens: Nice 😏",
+  100: "100 Tokens: Triple digits. Your table hates you 💀",
+  420: "420 Tokens: Blaze it 🌿🔥",
+  1000: "1,000 Tokens: Spreadsheet territory 📊",
+  10000: "10,000 Tokens: Judge! I need dice 🎲",
+  100000: "100,000 Tokens: Just tell your friends they’re dead ☠️",
+};
+
+// Scute milestones
+const SCUTE_MILESTONES = {
+  20: "20 Scutes: Enough to blot out the sun 🪲",
+  40: "40 Scutes: The colony grows 👑",
+  69: "69 Scutes: Nice swarm 😏",
+  100: "100 Scutes: Your board is writhing 💀",
+  420: "420 Scutes: The infestation blazes 🌿🔥",
+  1000: "1,000 Scutes: Hive mind achieved 📊",
+  10000: "10,000 Scutes: Bugged out! 🎲",
+  100000: "100,000 Scutes: Game over, man. Game over ☠️",
 };
 
 export default function App() {
   const [tab, setTab] = useState("simple");
   const [darkMode, setDarkMode] = useState(true);
+  const [soundOn, setSoundOn] = useState(true);
 
   // Simple mode
   const [baseTokens, setBaseTokens] = useState(1);
@@ -45,7 +59,9 @@ export default function App() {
 
   // Scute mode
   const [scutes, setScutes] = useState(1);
+  const [startingScutes, setStartingScutes] = useState(1);
   const [includeScutes, setIncludeScutes] = useState(false);
+  const [pulse, setPulse] = useState(false);
 
   // Totals + animation
   const [animatedTotal, setAnimatedTotal] = useState(1);
@@ -66,6 +82,15 @@ export default function App() {
       ? advancedTotal + (includeScutes ? scuteTotal : 0)
       : scuteTotal;
 
+  // Helper to play sounds
+  const playSound = (file) => {
+    if (soundOn) {
+      const audio = new Audio(`/sounds/${file}`);
+      audio.volume = 0.5;
+      audio.play();
+    }
+  };
+
   // Animate token counter
   useEffect(() => {
     const controls = animate(animatedTotal, total, {
@@ -77,13 +102,18 @@ export default function App() {
 
   // Milestone toasts
   useEffect(() => {
-    Object.keys(MILESTONES).forEach((m) => {
+    const milestones = tab === "scute" ? SCUTE_MILESTONES : TOKEN_MILESTONES;
+    Object.keys(milestones).forEach((m) => {
       const milestone = parseInt(m);
       if (animatedTotal === milestone) {
-        setToasts((prev) => [...prev, { id: Date.now(), text: MILESTONES[milestone] }]);
+        setToasts((prev) => [
+          ...prev,
+          { id: Date.now() + Math.random(), text: milestones[milestone], mode: tab },
+        ]);
+        playSound("confirmation.wav");
       }
     });
-  }, [animatedTotal]);
+  }, [animatedTotal, tab]);
 
   // Reset all
   const handleReset = () => {
@@ -93,7 +123,16 @@ export default function App() {
     setQuadruplers(0);
     setCards([]);
     setSelectedPreset(CARD_PRESETS[0].name);
-    setScutes(1);
+    setScutes(startingScutes);
+    playSound("whoosh.wav");
+  };
+
+  // Scute land drop
+  const handleLandDrop = () => {
+    setScutes(scutes * 2);
+    setPulse(true);
+    setTimeout(() => setPulse(false), 600);
+    playSound("bubble-pop.wav");
   };
 
   return (
@@ -107,12 +146,12 @@ export default function App() {
         backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl`}
       >
         {/* Nav Tabs */}
-        <div className="flex justify-center gap-6 border-b border-gray-600 pb-2">
+        <div className="flex overflow-x-auto justify-center gap-6 border-b border-gray-600 pb-2 items-center">
           {["simple", "advanced", "scute"].map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`relative px-4 py-2 font-semibold transition ${
+              className={`relative px-4 py-2 font-semibold transition shrink-0 ${
                 tab === t ? "text-blue-400" : "text-gray-400 hover:text-gray-200"
               }`}
             >
@@ -127,9 +166,9 @@ export default function App() {
               )}
             </button>
           ))}
-          {/* Dark/Light toggle */}
-          <div className="flex items-center gap-2 ml-auto">
-            <span className="text-sm">Light</span>
+          {/* Toggles */}
+          <div className="flex items-center gap-4 ml-auto shrink-0">
+            {/* Dark/Light */}
             <button
               onClick={() => setDarkMode(!darkMode)}
               className={`w-12 h-6 rounded-full relative transition-colors ${
@@ -142,6 +181,18 @@ export default function App() {
                 }`}
               ></span>
             </button>
+            {/* Sound FX */}
+            <motion.button
+              whileTap={{ scale: 0.8 }}
+              onClick={() => setSoundOn(!soundOn)}
+              className="p-2 rounded-lg hover:bg-gray-700 transition"
+            >
+              {soundOn ? (
+                <Volume2 className="w-6 h-6 text-blue-400" />
+              ) : (
+                <VolumeX className="w-6 h-6 text-gray-400" />
+              )}
+            </motion.button>
           </div>
         </div>
 
@@ -188,6 +239,7 @@ export default function App() {
                 onClick={() => {
                   const preset = CARD_PRESETS.find((c) => c.name === selectedPreset);
                   setCards([...cards, { ...preset, quantity: 1 }]);
+                  playSound("button-click.wav");
                 }}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:scale-105 hover:bg-blue-600 transition"
               >
@@ -205,7 +257,9 @@ export default function App() {
                   className="p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg bg-gray-700/60"
                 >
                   <div className="flex-1">
-                    <p className="font-semibold">{card.emoji} {card.name}</p>
+                    <p className="font-semibold">
+                      {card.emoji} {card.name}
+                    </p>
                     <p className="text-sm opacity-75">x{card.multiplier}</p>
                   </div>
                   <CustomQuantityInput
@@ -216,7 +270,10 @@ export default function App() {
                     darkMode={darkMode}
                   />
                   <button
-                    onClick={() => setCards(cards.filter((_, j) => j !== i))}
+                    onClick={() => {
+                      setCards(cards.filter((_, j) => j !== i));
+                      playSound("button-click.wav");
+                    }}
                     className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 hover:scale-105 transition"
                   >
                     Remove
@@ -229,32 +286,47 @@ export default function App() {
 
         {/* Scute Mode */}
         {tab === "scute" && (
-          <div
-            className="space-y-4 p-6 rounded-2xl shadow-xl backdrop-blur-lg bg-green-900/40 border border-green-500/40"
-          >
+          <div className="space-y-4 p-6 rounded-2xl shadow-xl backdrop-blur-lg bg-green-900/40 border border-green-500/40">
             <motion.h2
               key={scutes}
               initial={{ scale: 1 }}
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 0.4 }}
+              animate={pulse ? { scale: [1, 1.3, 1], textShadow: "0 0 20px #22c55e" } : { scale: 1 }}
+              transition={{ duration: 0.6 }}
               className="text-3xl font-extrabold text-green-300 text-center tabular-nums"
             >
               🪲 Total Scutes: {scutes}
             </motion.h2>
+
+            <div className="flex gap-2 items-center justify-center">
+              <label>Starting Scutes</label>
+              <CustomQuantityInput
+                value={startingScutes}
+                onChange={(val) => {
+                  setStartingScutes(val);
+                  setScutes(val);
+                }}
+                darkMode={darkMode}
+              />
+            </div>
+
             <div className="flex justify-center gap-4">
               <button
-                onClick={() => setScutes(scutes * 2)}
+                onClick={handleLandDrop}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 hover:scale-105 transition"
               >
                 + Land Drop
               </button>
               <button
-                onClick={() => setScutes(1)}
+                onClick={() => {
+                  setScutes(startingScutes);
+                  playSound("whoosh.wav");
+                }}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 hover:scale-105 transition"
               >
                 Reset
               </button>
             </div>
+
             <div className="flex items-center justify-center gap-2">
               <span>Include Scutes in totals</span>
               <button
@@ -280,7 +352,9 @@ export default function App() {
             initial={{ scale: 1 }}
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 0.4 }}
-            className="text-3xl font-extrabold text-green-400 tabular-nums"
+            className={`text-3xl font-extrabold tabular-nums ${
+              tab === "scute" ? "text-green-400" : "text-blue-400"
+            }`}
           >
             Total Tokens: {animatedTotal}
           </motion.div>
@@ -293,7 +367,7 @@ export default function App() {
         </div>
 
         {/* Toasts */}
-        <div className="fixed top-6 right-6 space-y-2 z-50">
+        <div className="fixed top-20 right-6 space-y-2 z-50">
           <AnimatePresence>
             {toasts.map((toast) => (
               <motion.div
@@ -302,7 +376,12 @@ export default function App() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 50 }}
                 transition={{ duration: 0.4 }}
-                className="px-4 py-2 rounded-lg shadow-lg bg-blue-600 text-white"
+                onClick={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))}
+                className={`px-4 py-2 rounded-lg shadow-lg cursor-pointer backdrop-blur-md ${
+                  toast.mode === "scute"
+                    ? "bg-green-700/70 text-green-100 border border-green-400/50"
+                    : "bg-blue-700/70 text-blue-100 border border-blue-400/50"
+                }`}
               >
                 {toast.text}
               </motion.div>
