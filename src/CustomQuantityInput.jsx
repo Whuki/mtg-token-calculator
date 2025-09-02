@@ -1,39 +1,48 @@
 import React from "react";
 
-export default function CustomQuantityInput({ value, onChange, rowIndex }) {
-  const handleDecrement = () => {
-    if (value > 0) {
-      onChange(value - 1);
-    }
-  };
+export default function CustomQuantityInput({ value, onChange, darkMode, rowIndex }) {
+  const increment = () => onChange(value + 1);
+  const decrement = () => onChange(value > 0 ? value - 1 : 0);
 
-  const handleIncrement = () => {
-    onChange(value + 1);
-  };
+  // Row-based background colors
+  const bgColor =
+    rowIndex % 2 === 0
+      ? darkMode
+        ? "bg-gray-800 text-gray-100 border-gray-600"
+        : "bg-gray-50 text-gray-900 border-gray-300"
+      : darkMode
+      ? "bg-gray-700 text-gray-100 border-gray-600"
+      : "bg-white text-gray-900 border-gray-300";
 
-  // Alternate background color based on rowIndex
-  const bgColor = rowIndex % 2 === 0 ? "bg-gray-800" : "bg-gray-700";
+  const hoverBg =
+    rowIndex % 2 === 0
+      ? darkMode
+        ? "hover:bg-gray-700"
+        : "hover:bg-gray-100"
+      : darkMode
+      ? "hover:bg-gray-600"
+      : "hover:bg-gray-100";
 
   return (
-    <div
-      className={`flex items-center justify-center rounded-lg ${bgColor} px-2`}
-    >
+    <div className="flex items-center justify-center space-x-1">
       <button
-        onClick={handleDecrement}
-        className="px-2 py-1 text-lg font-bold text-white rounded-lg hover:bg-gray-600"
+        type="button"
+        onClick={decrement}
+        className={`px-2 py-0.5 rounded transition-colors ${bgColor} ${hoverBg}`}
       >
         -
       </button>
       <input
         type="number"
         value={value}
-        min="0"
-        onChange={(e) => onChange(parseInt(e.target.value) || 0)}
-        className="w-12 mx-1 text-center text-white bg-transparent focus:outline-none"
+        onChange={(e) => onChange(Number(e.target.value))}
+        min={0}
+        className={`w-16 text-center p-1 rounded-sm focus:outline-none focus:ring-1 ${bgColor} focus:ring-blue-400`}
       />
       <button
-        onClick={handleIncrement}
-        className="px-2 py-1 text-lg font-bold text-white rounded-lg hover:bg-gray-600"
+        type="button"
+        onClick={increment}
+        className={`px-2 py-0.5 rounded transition-colors ${bgColor} ${hoverBg}`}
       >
         +
       </button>
